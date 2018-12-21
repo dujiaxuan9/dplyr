@@ -373,6 +373,8 @@ public:
   // remove this variable from the environments
   void rm(const SymbolString& symbol) {
     int idx = symbol_map.find(symbol);
+    if (idx < 0)
+      return;
 
     if (active_bindings_ready) {
       column_bindings[idx].detach(mask_active, mask_resolved);
@@ -506,6 +508,10 @@ public:
     // update the data context variables, these are used by n(), ...
     get_context_env()["..group_size"] = indices.size();
     get_context_env()["..group_number"] = indices.group() + 1;
+
+    if (TYPEOF(expr) == LANGSXP && Rf_inherits(CAR(expr), "rlang_lambda_function")) {
+      SET_CLOENV(CAR(expr), mask_resolved) ;
+    }
 
     // evaluate the call in the data mask
     SEXP res = Rcpp_fast_eval(expr, data_mask);
