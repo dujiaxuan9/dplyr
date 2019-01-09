@@ -87,6 +87,7 @@ SEXP reconstruct_groups(const DataFrame& old_groups, const std::vector<IntegerVe
 
   set_rownames(out, new_indices.size());
   set_class(out, NaturalDataFrame::classes());
+  copy_attrib(out, old_groups, symbols::dot_drop);
   out.attr("names") = names;
   return out ;
 }
